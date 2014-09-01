@@ -21,7 +21,7 @@ define(function(require) {
             var assess = Adapt.diffuseAssessment.getAssessmentById(assessment);
 
             var thisHandle = this;
-            if (assess._isComplete) _.defer(function() { thisHandle.assessmentComplete(assess) } );
+
     	},
     	
         assessmentComplete: function(assess) {
@@ -37,7 +37,7 @@ define(function(require) {
 
             var thisHandle = this;
             this.$el.addClass("complete");
-            
+
             html2img(this.$el, function(data) {
 
                 var img = new Image();
@@ -54,7 +54,6 @@ define(function(require) {
         },
 
         resize: function() {
-            return;
             if (!this.$el.hasClass("complete")) return;
 
             var thisHandle = this;

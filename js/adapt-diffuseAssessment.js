@@ -13,6 +13,7 @@ define(function(require) {
 	var uid = 0;
 
 	var defaultAssessment = {
+		
 		_score: 0,
 		_scoreAsPercent: 0,
 		_possibleScore: 0,
@@ -25,6 +26,7 @@ define(function(require) {
 		_isComplete: false,
 		_parentId: undefined,
 		title: "",
+
 		calculateScore: function() {
 			//If no other incomplete components in assessment
 			this._score = 0;
@@ -240,7 +242,7 @@ define(function(require) {
 		if ( _.values(assessments).length === 0 ) return;
 
 		_.each(assessments, function (assess, key) {
-			if (assess._isComplete) return;
+			var wasComplete = assess._isComplete;
 
 			if (!assess.calculateIsComplete(assess)) return;
 
@@ -263,8 +265,6 @@ define(function(require) {
 		if ( _.values(parentAssessments).length === 0 ) return;
 
 		_.each(parentAssessments, function (assess, key) {
-			
-			if (assess._isComplete) return;
 			
 			if (!assess.calculateIsComplete(assess)) return;
 
