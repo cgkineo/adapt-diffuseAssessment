@@ -128,27 +128,70 @@ Diffuse Assessment Model:
 Example assessment:
 ```
 {
-	_assessmentModels: {
+	_assessmentModels: { //children assessments
 
 	},
-	_assessments: [],
-	_componentModels: {
+	_assessments: [], //children assessments directly from page/article/block json
+	_componentModels: { //children components
 
 	},
-	_components: [],
-	_feedback: {
-
+	_components: [], //components directly from page/article/block json
+	_feedback: { //feedback directly from page/article/block json
+		{
+            "_forScore": {	//use either _foreScore or _forScoreAsPercent
+                "_max": 1,
+                "_min": 1
+            },
+            "_forScoreAsPercent": {
+                "_min": 100,
+                "_max": 100
+            },
+            "title": "{{_scoreAsPercent}}% Well done!",
+            "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
+        },
+        {
+            "_forScore": { //use either _foreScore or _forScoreAsPercent
+                "_min": 0,
+                "_max": 0
+            },
+            "_forScoreAsPercent": {
+                "_min": 0,
+                "_max": 0
+            },
+            "title": "{{_scoreAsPercent}}% Oops!",
+            "body": "Unfortunately this score is not really very good!"
+        }
 	},
-	_id: "",
-	_isComplete: "",
-	_parentId: "course",
-	_parents: [],
-	_possibleScore: 0,
-	_score: 0,
-	_scoreAsPercent: 0,
-	calculateIdComplete(),
-	calculateScore(),
-	getFeedback(),
-	title: "",
+	_id: "", //assessment id directly from page/article/block json
+	_isComplete: false,
+	_parentId: "course", //element (page/article/block) id
+	_parents: [], //parent assessments
+	_possibleScore: 0, //total possible score
+	_score: 0, //total score at completion
+	_scoreAsPercent: 0, //percentage score
+	calculateIdComplete(), //function to set _isComplete
+	calculateScore(), //function to set _score and _scoreAsPercent
+	getFeedback(), //function to get appropriate feedback
+	title: "", //title of assessment (currently unused);
+}
+```
+
+Example Feedback Component (to go in component json):
+```
+{
+    "_id": "c-76",
+    "_parentId": "b-66",
+    "_type": "component",
+    "_component": "diffuseAssessmentFeedback",
+    "_classes": "",
+    "_layout": "full",
+    "title": "", //leave blank as taken from appropriate feedback
+    "displayTitle": "",  //leave blank as taken from appropriate feedback
+    "body": "",  //leave blank as taken from appropriate feedback
+    "instruction": "",  //leave blank as taken from appropriate feedback
+    "_assessment": "assessment2", //specify assessment id
+    "_pageLevelProgress": {
+        "_isEnabled": false
+    }
 }
 ```
