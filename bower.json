@@ -1,0 +1,14 @@
+{
+  "name": "adapt-diffuseAssessment",
+  "homepage": "https://github.com/cgkineo/adapt-diffuseAssessment",
+  "authors": [
+    "Oliver Foster <oliver.foster@kineo.com"
+  ],
+  "description": "%description",
+  "main": "/js/adapt-diffuseAssessment.js",
+  "keywords": [
+    "adapt-plugin",
+    "adapt-extension"
+  ],
+  "license": "GPLv3"
+}
