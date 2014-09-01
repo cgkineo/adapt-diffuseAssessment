@@ -1,7 +1,7 @@
 adapt-diffuseAssessment
 ================
 
-Dependencies: adapt-html2img
+Dependencies: [adapt-html2img](https://github.com/cgkineo/adapt-html2img)
 
 Multiple, centralized, cross-element (page/article/block) assessments.
 
