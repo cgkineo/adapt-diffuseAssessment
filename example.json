@@ -5,6 +5,7 @@
         {
             "_id": "assessment1",
             "title": "Global assessment number 1",
+            "_assessmentWeight": 1,
             "_feedback": [
                 {
                     "_forScore": {
@@ -42,7 +43,7 @@
     "_isEnabled": true,
     "_id": "assessment2",
     "title": "Assessment for this section",
-    "_isResultsShown": true,
+    "_assessmentWeight": 1,
     "_feedback": [
         {
             "_forScore": {
@@ -85,7 +86,11 @@
     "displayTitle": "",
     "body": "",
     "instruction": "",
-    "_assessment": "assessment2",
+    "_diffuseAssessment": {
+        "_assessmentId": "assessment2",
+        "_isResetOnRevisit": true,
+        "_isDisplayAsImage": true
+    },
     "_pageLevelProgress": {
         "_isEnabled": false
     }

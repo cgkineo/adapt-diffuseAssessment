@@ -12,49 +12,66 @@ define(function(require) {
 
     	postRender: function() {
 
+            this.$el.addClass("not-complete");
+
             this.listenTo(Adapt, "diffuseAssessment:assessmentComplete", this.assessmentComplete);
             this.listenTo(Adapt, "device:resize device:change", this.resize);
             this.listenTo(Adapt, "remove", this.remove);
     		this.setReadyStatus();
 
-            var assessment = this.model.get("_assessment");
-            var assess = Adapt.diffuseAssessment.getAssessmentById(assessment);
+            var model = this.model.get("_diffuseAssessment");
+            var assess = model._assessmentId;
+            if (assess === undefined) return;
 
-            var thisHandle = this;
+            if (model._isDisplayAsImage) this.$el.addClass("is-displayasimage");
+            else this.$el.addClass("not-displayasimage");
+
+            var assessment = Adapt.diffuseAssessment.getAssessmentById(assess);
+
+            if (!model._isResetOnRevisit && assessment._isComplete) this.assessmentComplete(assessment);
 
     	},
     	
         assessmentComplete: function(assess) {
             this.setCompletionStatus();
 
-            var assessment = this.model.get("_assessment");
-            if (assess._id != assessment) return;
+            var assessment = this.model.get("_diffuseAssessment");
+            if (assess._id != assessment._assessmentId) return;
 
-            var feedback = Adapt.diffuseAssessment.getAssessmentById(assessment).getFeedback();
+            var feedback = Adapt.diffuseAssessment.getAssessmentById(assessment._assessmentId).getFeedback();
             
             this.$el.find(".component-title-inner").html(HBS.compile(feedback.title)(assess));
             this.$el.find(".component-body-inner").html(HBS.compile(feedback.body)(assess));
 
             var thisHandle = this;
-            this.$el.addClass("complete");
+            this.$el.removeClass("not-complete");
+            this.$el.addClass("is-complete");
 
-            html2img(this.$el, function(data) {
+            var model = this.model.get("_diffuseAssessment");
 
-                var img = new Image();
-                img.src = data;
-                $(img).css("cursor", "pointer").attr("id","outputimg");
+            if (model._isDisplayAsImage) {
 
-                thisHandle.$el.children("#outputimg").remove();
-                thisHandle.$el.append(img);
+                html2img(this.$el, function(data) {
 
-            }, function(clone) {
-                clone.css("width", thisHandle.$el.parent().width() + "px");
-            });
+                    var img = new Image();
+                    img.src = data;
+                    $(img).css("cursor", "pointer").attr("id","outputimg");
+
+                    thisHandle.$el.children("#outputimg").remove();
+                    thisHandle.$el.append(img);
+
+                }, function(clone) {
+                    if (thisHandle.model.get("_layout") !== "full") clone.css("width", thisHandle.$el.parent().width() / 2 + "px");
+                    else clone.css("width", thisHandle.$el.parent().width() + "px");
+                });
+            }
 
         },
 
         resize: function() {
-            if (!this.$el.hasClass("complete")) return;
+            if (!this.$el.hasClass("is-complete")) return;
+            var model = this.model.get("_diffuseAssessment");
+            if (!model._isDisplayAsImage) return;
 
             var thisHandle = this;
             thisHandle.$el.children("#outputimg").remove();
@@ -68,7 +85,8 @@ define(function(require) {
                 thisHandle.$el.append(img);
 
             }, function(clone) {
-                clone.css("width", thisHandle.$el.parent().width() + "px");
+                if (thisHandle.model.get("_layout") !== "full") clone.css("width", thisHandle.$el.parent().width() / 2 + "px");
+                else clone.css("width", thisHandle.$el.parent().width() + "px");
             });
 
         }

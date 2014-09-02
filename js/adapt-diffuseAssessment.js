@@ -14,6 +14,7 @@ define(function(require) {
 
 	var defaultAssessment = {
 		
+		_assessmentWeight: 1,
 		_score: 0,
 		_scoreAsPercent: 0,
 		_possibleScore: 0,
@@ -39,7 +40,7 @@ define(function(require) {
 
 			if (this._assessmentModels !== undefined) {
 				this._score =_.reduce(this._assessmentModels, function(sum, item) {
-					return sum+=item._score;
+					return sum+=item._score*item._assessmentWeight;
 				}, this._score);
 			}
 
@@ -181,8 +182,8 @@ define(function(require) {
 				assessmentsById[assessmentId]['_parents'][assess._id] = assess;
 			})
 			assess._possibleScore = _.reduce(assess._assessmentModels, function(sum, item) {
-				return sum+=item._possibleScore;
-			},0);
+				return sum+=item._assessmentWeight;
+			},assess._possibleScore);
 		});	
 
 

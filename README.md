@@ -138,7 +138,7 @@ Example assessment:
 	_components: [], //components directly from page/article/block json
 	_feedback: { //feedback directly from page/article/block json
 		{
-            "_forScore": {	//use either _foreScore or _forScoreAsPercent
+            "_forScore": {	//use either _forScore or _forScoreAsPercent
                 "_max": 1,
                 "_min": 1
             },
@@ -150,7 +150,7 @@ Example assessment:
             "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
         },
         {
-            "_forScore": { //use either _foreScore or _forScoreAsPercent
+            "_forScore": { //use either _forScore or _forScoreAsPercent
                 "_min": 0,
                 "_max": 0
             },
@@ -189,7 +189,112 @@ Example Feedback Component (to go in component json):
     "displayTitle": "",  //leave blank as taken from appropriate feedback
     "body": "",  //leave blank as taken from appropriate feedback
     "instruction": "",  //leave blank as taken from appropriate feedback
-    "_assessment": "assessment2", //specify assessment id
+    "_diffuseAssessment": {
+        "_assessmentId": "assessment2",
+        "_isResetOnRevisit": true,
+        "_isDisplayAsImage": true
+    },
+    "_pageLevelProgress": {
+        "_isEnabled": false
+    }
+}
+```
+
+Configurations:
+```
+// To go in the course.json file
+"_diffuseAssessment": {
+    "_isEnabled": true,
+    "_assessments": [ 
+        {
+            "_id": "assessment1",
+            "title": "Global assessment number 1",
+            "_assessmentWeight": 1,
+            "_feedback": [
+                {
+                    "_forScore": { //use either _forScore or _forScoreAsPercent
+                        "_max": 1,
+                        "_min": 1
+                    },
+                    "_forScoreAsPercent": {
+                        "_min": 100,
+                        "_max": 100
+                    },
+                    "title": "{{_scoreAsPercent}}% Well done!",
+                    "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
+                },
+                {
+                    "_forScore": { //use either _forScore or _forScoreAsPercent
+                        "_min": 0,
+                        "_max": 0
+                    },
+                    "_forScoreAsPercent": {
+                        "_min": 0,
+                        "_max": 0
+                    },
+                    "title": "{{_scoreAsPercent}}% Oops!",
+                    "body": "Unfortunately this score is not really very good!"
+                }
+            ],
+            "_assessments": [ "assessment2" ]
+        }
+    ]
+}
+
+
+// To go in course/page/article/block
+"_diffuseAssessment": {
+    "_isEnabled": true,
+    "_id": "assessment2",
+    "title": "Assessment for this section",
+    "_assessmentWeight": 1,
+    "_feedback": [
+        {
+            "_forScore": { //use either _forScore or _forScoreAsPercent
+                "_min": 1,
+                "_max": 1
+            },
+            "_forScoreAsPercent": {
+                "_min": 100,
+                "_max": 100
+            },
+            "title": "{{_scoreAsPercent}}% Well done!",
+            "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
+        },
+        {
+            "_forScore": { //use either _forScore or _forScoreAsPercent
+                "_min": 0,
+                "_max": 0
+            },
+            "_forScoreAsPercent": {
+                "_min": 0,
+                "_max": 0
+            },
+            "title": "{{_scoreAsPercent}}% Oops!",
+            "body": "Unfortunately this score is not really very good!"
+        }
+    ],
+    "_components": [ "c-75" ]
+}
+
+
+//results, to go in components.json
+{
+    "_id": "c-76",
+    "_parentId": "b-66",
+    "_type": "component",
+    "_component": "diffuseAssessmentFeedback",
+    "_classes": "",
+    "_layout": "full",
+    "title": "",
+    "displayTitle": "",
+    "body": "",
+    "instruction": "",
+    "_diffuseAssessment": {
+        "_assessmentId": "assessment2",
+        "_isResetOnRevisit": true,
+	    "_isDisplayAsImage": true
+    },
     "_pageLevelProgress": {
         "_isEnabled": false
     }
