@@ -9,7 +9,7 @@ define(function(require) {
 	var Adapt = require('coreJS/adapt');
 	var Backbone = require('backbone');
 	var DAFeedback = require('extensions/adapt-diffuseAssessment/js/diffuseAssessmentFeedback');
-
+	
 	var uid = 0;
 
 	var defaultAssessment = {
@@ -189,6 +189,8 @@ define(function(require) {
 
 		//Setup public model
 		diffuseAssessment.model.set(course);
+
+		Adapt.trigger("diffuseAssessment:initialized", diffuseAssessment);
 
 	});
 
