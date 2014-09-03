@@ -63,13 +63,17 @@ define(function(require) {
 			return true;
 		},
 
-		getFeedback: function() {
+		getFeedback: function(optionalFeedbackObject) {
 			this.calculateScore();
 
-			if (this._feedback === undefined) return;
+			var _feedback = undefined;
+			if (optionalFeedback !== undefined) _feedback = optionalFeedbackObject;
+			else _feedback = this._feedback;
 
-			for (var f = 0; f < this._feedback.length; f++) {
-				var feedback = this._feedback[f];
+			if (_feedback === undefined) return;
+
+			for (var f = 0; f < _feedback.length; f++) {
+				var feedback = _feedback[f];
 				if (feedback._forScoreAsPercent !== undefined && feedback._forScoreAsPercent._max >= this._scoreAsPercent && feedback._forScoreAsPercent._min <= this._scoreAsPercent ) return feedback;
 				else if (feedback._forScore !== undefined && feedback._forScore._max >= this._score && feedback._forScore._min <= this._score ) return feedback;
 			}

@@ -38,7 +38,7 @@ define(function(require) {
             var assessment = this.model.get("_diffuseAssessment");
             if (assess._id != assessment._assessmentId) return;
 
-            var feedback = Adapt.diffuseAssessment.getAssessmentById(assessment._assessmentId).getFeedback();
+            var feedback = Adapt.diffuseAssessment.getAssessmentById(assessment._assessmentId).getFeedback(assessment['_feedback']);
             
             this.$el.find(".component-title-inner").html(HBS.compile(feedback.title)(assess));
             this.$el.find(".component-body-inner").html(HBS.compile(feedback.body)(assess));
