@@ -146,7 +146,7 @@ Assessment Model:
 	_possibleScore: 0, //total possible score
 	_score: 0, //total score at completion
 	_scoreAsPercent: 0, //percentage score
-	calculateIdComplete(), //function to set _isComplete
+	calculateIsComplete(), //function to set _isComplete
 	calculateScore() //function to set _score and _scoreAsPercent
 }
 ```
@@ -209,15 +209,15 @@ Example Assessment Configuration (to go in course.json):
 "_diffuseAssessment": {
     "_isEnabled": true,
     "_assessments": [ 
-        {
-            "_id": "assessment1",
-            "_assessmentWeight": 1,
-            "_assessments": [ "assessment2" ]
-        }
 	{
-	    "_id": "assessment2",
+	    "_id": "assessment1",
 	    "_assessmentWeight": 1,
-	    "_components": [ "c-75" ]
+	    "_assessments": [ "assessment2" ]
+	}
+	{
+		"_id": "assessment2",
+		"_assessmentWeight": 1,
+		"_components": [ "c-75" ]
 	}
     ]
 }
