@@ -36,7 +36,7 @@ assessment1 > assessment2		> c-125
 
 ```
 
-Diffuse Assessment Public Interface:
+###Public Interface:
 ```
 Adapt.diffuseAssessment.getAssessments(); //will return all assessments
 Adapt.diffuseAssessment.getAssessmentById(id); //returns assessment with id ("assessment1" / "assessment2" / etc)
@@ -45,8 +45,9 @@ Adapt.diffuseAssessment.getAssessmentsByComponentId(id); //will return all asses
 Adapt.diffuseAssessment.model;
 ```
 
+###Models
 
-Diffuse Assessment Model:
+Global Model:
 ```
 {
 	_assessments: [],	//directly from course.json
@@ -127,7 +128,7 @@ Diffuse Assessment Model:
 }
 ```
 
-Example assessment:
+Assessment Model:
 ```
 {
 	_assessmentModels: { //children assessments
@@ -149,6 +150,8 @@ Example assessment:
 	calculateScore() //function to set _score and _scoreAsPercent
 }
 ```
+
+###Configuration
 
 Example Feedback Component (to go in component json):
 ```
@@ -200,7 +203,7 @@ Example Feedback Component (to go in component json):
 }
 ```
 
-Configurations:
+Example Assessment Configuration (to go in course.json):
 ```
 // To go in the course.json file
 "_diffuseAssessment": {
@@ -217,53 +220,5 @@ Configurations:
 	    "_components": [ "c-75" ]
 	}
     ]
-}
-
-//results, to go in components.json
-{
-    "_id": "c-76",
-    "_parentId": "b-66",
-    "_type": "component",
-    "_component": "diffuseAssessmentFeedback",
-    "_classes": "",
-    "_layout": "full",
-    "title": "",
-    "displayTitle": "",
-    "body": "",
-    "instruction": "",
-    "_diffuseAssessment": {
-	"_assessmentId": "assessment2",
-	"_isResetOnRevisit": true,
-	"_isDisplayAsImage": true
-	_feedback: {
-		{
-		    "_forScore": {	//use either _forScore or _forScoreAsPercent
-		        "_max": 1,
-		        "_min": 1
-		    },
-		    "_forScoreAsPercent": {
-		        "_min": 100,
-		        "_max": 100
-		    },
-		    "title": "{{_scoreAsPercent}}% Well done!",
-		    "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
-		},
-		{
-		    "_forScore": { //use either _forScore or _forScoreAsPercent
-		        "_min": 0,
-		        "_max": 0
-		    },
-		    "_forScoreAsPercent": {
-		        "_min": 0,
-		        "_max": 0
-		    },
-		    "title": "{{_scoreAsPercent}}% Oops!",
-		    "body": "Unfortunately this score is not really very good!"
-		}
-	}
-    },
-    "_pageLevelProgress": {
-        "_isEnabled": false
-    }
 }
 ```
