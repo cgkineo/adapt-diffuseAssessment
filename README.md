@@ -12,7 +12,7 @@ Build assessment trees. Output the results for an assessment on any/many pages a
 Example Assessment Tree:
 ```
 COURSE		  PAGE 			  COMPONENT
-assessment1 > assessment2	> c-125
+assessment1 > assessment2		> c-125
 							> c-126
 							> c-127
 							> c-128
@@ -138,32 +138,6 @@ Example assessment:
 
 	},
 	_components: [], //components directly from page/article/block json
-	_feedback: { //feedback directly from page/article/block json
-		{
-            "_forScore": {	//use either _forScore or _forScoreAsPercent
-                "_max": 1,
-                "_min": 1
-            },
-            "_forScoreAsPercent": {
-                "_min": 100,
-                "_max": 100
-            },
-            "title": "{{_scoreAsPercent}}% Well done!",
-            "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
-        },
-        {
-            "_forScore": { //use either _forScore or _forScoreAsPercent
-                "_min": 0,
-                "_max": 0
-            },
-            "_forScoreAsPercent": {
-                "_min": 0,
-                "_max": 0
-            },
-            "title": "{{_scoreAsPercent}}% Oops!",
-            "body": "Unfortunately this score is not really very good!"
-        }
-	},
 	_id: "", //assessment id directly from page/article/block json
 	_isComplete: false,
 	_parentId: "course", //element (page/article/block) id
@@ -172,9 +146,7 @@ Example assessment:
 	_score: 0, //total score at completion
 	_scoreAsPercent: 0, //percentage score
 	calculateIdComplete(), //function to set _isComplete
-	calculateScore(), //function to set _score and _scoreAsPercent
-	getFeedback(), //function to get appropriate feedback
-	title: "", //title of assessment (currently unused);
+	calculateScore() //function to set _score and _scoreAsPercent
 }
 ```
 
@@ -194,7 +166,33 @@ Example Feedback Component (to go in component json):
     "_diffuseAssessment": {
         "_assessmentId": "assessment2",
         "_isResetOnRevisit": true,
-        "_isDisplayAsImage": true
+        "_isDisplayAsImage": true,
+        _feedback: { 
+		{
+	            "_forScore": {	//use either _forScore or _forScoreAsPercent
+	                "_max": 1,
+	                "_min": 1
+	            },
+	            "_forScoreAsPercent": {
+	                "_min": 100,
+	                "_max": 100
+	            },
+	            "title": "{{_scoreAsPercent}}% Well done!",
+	            "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
+	        },
+	        {
+	            "_forScore": { //use either _forScore or _forScoreAsPercent
+	                "_min": 0,
+	                "_max": 0
+	            },
+	            "_forScoreAsPercent": {
+	                "_min": 0,
+	                "_max": 0
+	            },
+	            "title": "{{_scoreAsPercent}}% Oops!",
+	            "body": "Unfortunately this score is not really very good!"
+	        }
+	}
     },
     "_pageLevelProgress": {
         "_isEnabled": false
@@ -210,75 +208,16 @@ Configurations:
     "_assessments": [ 
         {
             "_id": "assessment1",
-            "title": "Global assessment number 1",
             "_assessmentWeight": 1,
-            "_feedback": [
-                {
-                    "_forScore": { //use either _forScore or _forScoreAsPercent
-                        "_max": 1,
-                        "_min": 1
-                    },
-                    "_forScoreAsPercent": {
-                        "_min": 100,
-                        "_max": 100
-                    },
-                    "title": "{{_scoreAsPercent}}% Well done!",
-                    "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
-                },
-                {
-                    "_forScore": { //use either _forScore or _forScoreAsPercent
-                        "_min": 0,
-                        "_max": 0
-                    },
-                    "_forScoreAsPercent": {
-                        "_min": 0,
-                        "_max": 0
-                    },
-                    "title": "{{_scoreAsPercent}}% Oops!",
-                    "body": "Unfortunately this score is not really very good!"
-                }
-            ],
             "_assessments": [ "assessment2" ]
         }
+	{
+	    "_id": "assessment2",
+	    "_assessmentWeight": 1,
+	    "_components": [ "c-75" ]
+	}
     ]
 }
-
-
-// To go in course/page/article/block
-"_diffuseAssessment": {
-    "_isEnabled": true,
-    "_id": "assessment2",
-    "title": "Assessment for this section",
-    "_assessmentWeight": 1,
-    "_feedback": [
-        {
-            "_forScore": { //use either _forScore or _forScoreAsPercent
-                "_min": 1,
-                "_max": 1
-            },
-            "_forScoreAsPercent": {
-                "_min": 100,
-                "_max": 100
-            },
-            "title": "{{_scoreAsPercent}}% Well done!",
-            "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
-        },
-        {
-            "_forScore": { //use either _forScore or _forScoreAsPercent
-                "_min": 0,
-                "_max": 0
-            },
-            "_forScoreAsPercent": {
-                "_min": 0,
-                "_max": 0
-            },
-            "title": "{{_scoreAsPercent}}% Oops!",
-            "body": "Unfortunately this score is not really very good!"
-        }
-    ],
-    "_components": [ "c-75" ]
-}
-
 
 //results, to go in components.json
 {
@@ -293,9 +232,35 @@ Configurations:
     "body": "",
     "instruction": "",
     "_diffuseAssessment": {
-        "_assessmentId": "assessment2",
-        "_isResetOnRevisit": true,
-	    "_isDisplayAsImage": true
+	"_assessmentId": "assessment2",
+	"_isResetOnRevisit": true,
+	"_isDisplayAsImage": true
+	_feedback: {
+		{
+		    "_forScore": {	//use either _forScore or _forScoreAsPercent
+		        "_max": 1,
+		        "_min": 1
+		    },
+		    "_forScoreAsPercent": {
+		        "_min": 100,
+		        "_max": 100
+		    },
+		    "title": "{{_scoreAsPercent}}% Well done!",
+		    "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
+		},
+		{
+		    "_forScore": { //use either _forScore or _forScoreAsPercent
+		        "_min": 0,
+		        "_max": 0
+		    },
+		    "_forScoreAsPercent": {
+		        "_min": 0,
+		        "_max": 0
+		    },
+		    "title": "{{_scoreAsPercent}}% Oops!",
+		    "body": "Unfortunately this score is not really very good!"
+		}
+	}
     },
     "_pageLevelProgress": {
         "_isEnabled": false
