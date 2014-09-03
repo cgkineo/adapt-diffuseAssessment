@@ -31,14 +31,28 @@ define(function(require) {
             if (!model._isResetOnRevisit && assessment._isComplete) this.assessmentComplete(assessment);
 
     	},
-    	
+
         assessmentComplete: function(assess) {
             this.setCompletionStatus();
 
             var assessment = this.model.get("_diffuseAssessment");
             if (assess._id != assessment._assessmentId) return;
 
-            var feedback = Adapt.diffuseAssessment.getAssessmentById(assessment._assessmentId).getFeedback(assessment['_feedback']);
+            var _feedback = assessment['_feedback'];
+            var feedback = undefined;
+            for (var f = 0; f < _feedback.length; f++) {
+                var item = _feedback[f];
+                if (item._forScoreAsPercent !== undefined && item._forScoreAsPercent._max >= assess._scoreAsPercent && item._forScoreAsPercent._min <= assess._scoreAsPercent ) {
+                    feedback = item;
+                    break;
+                } else if (item._forScore !== undefined && item._forScore._max >= assess._score && feedback._forScore._min <= assess._score ) {
+                    feedback = item;
+                    break;
+                }
+            }
+
+            if (feedback === undefined) return;
+
             
             this.$el.find(".component-title-inner").html(HBS.compile(feedback.title)(assess));
             this.$el.find(".component-body-inner").html(HBS.compile(feedback.body)(assess));
