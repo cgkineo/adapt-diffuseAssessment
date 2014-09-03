@@ -18,6 +18,10 @@ define(function(require) {
 		_score: 0,
 		_scoreAsPercent: 0,
 		_possibleScore: 0,
+		_completeComponents: 0,
+		_completeAssessments: 0,
+		_incompleteComponents: 0,
+		_incompleteAssessments: 0,
 		_assessmentModels: undefined,
 		_parents: undefined,
 		_componentModels: undefined,
@@ -51,10 +55,14 @@ define(function(require) {
 			var rtn = false;
 			if (this._componentModels !== undefined) {
 				var inCompletes = this._componentModels.where({ _isComplete : false });
+				this._incompleteComponents = inCompletes.length;
+				this._completeComponents = this._components.length - inCompletes.length;
 				if (inCompletes.length !== 0) return false;
 			}
 			if (this._assessmentModels !== undefined) {
 				var inCompletes = _.where(this._assessmentModels, { _isComplete : false });
+				this._incompleteAssessments = inCompletes.length;
+				this._completeAssessments = this._assessments.length - inCompletes.length;
 				if (inCompletes.length !== 0) return false;
 			}
 			this._isComplete = true;
@@ -149,26 +157,67 @@ define(function(require) {
 				course._assessmentsByComponentId[componentId][assess._id] = assess;
 				componentModels.push(Adapt.findById(componentId));
 			});
+			assess._incompleteComponents = assess._components.length;
 			assess._componentModels = new Backbone.Collection(componentModels);
 			assess._possibleScore = _.reduce(assess._componentModels.toJSON(), function(sum, item) {
 				return sum+=item._questionWeight;
 			},0);
 		});
 
+		//Begin to sort assessments by heirarchy
+		var heirarchy = [ {} ];
+		var remaining = {};
+
 		//Store children assessments by their ids
 		//Link parents and children
+		//Capture assessments with no children assessments
 		_.each(assessmentsById, function(assess) {
-			if (assess._assessments === undefined) return;
-			assess._assessmentModels = {}
+			if (assess._assessments === undefined) {
+				heirarchy[0][assess._id] = [];
+				return;
+			}
+			remaining[assess._id] = _.clone(assess._assessments);
+			assess._assessmentModels = {};
 			_.each(assess._assessments, function(assessmentId) {
 				assess._assessmentModels[assessmentId] = assessmentsById[assessmentId];
 				if (assessmentsById[assessmentId]['_parents'] == undefined) assessmentsById[assessmentId]['_parents'] = {};
 				assessmentsById[assessmentId]['_parents'][assess._id] = assess;
 			})
-			assess._possibleScore = _.reduce(assess._assessmentModels, function(sum, item) {
-				return sum+=item._assessmentWeight;
-			},assess._possibleScore);
 		});	
+
+		//Build dependency heirarchy from assessments with no children assessments
+		var level = 0;
+		while (_.keys(remaining).length > 0 && level < 100) {
+			var toRemove = _.keys(heirarchy[level]);
+			heirarchy.push({});
+			_.each(remaining, function(item, key) {
+				var leftOver = _.difference(item, toRemove);
+				remaining[key] = leftOver;
+				if (leftOver.length === 0) {
+					delete remaining[key];
+					heirarchy[level+1][key] = item;
+				}
+			});
+			level++;
+		}
+		if (level === 100) throw "diffuseAssessment too many levels!"
+
+		//Flatten heirarchy into dependency order array
+		var order = [];
+		for (var i = 0; i < heirarchy.length; i++) {
+			order = order.concat(_.keys(heirarchy[i]));
+		}
+
+		//Calculate possible scores of assessment tree
+		_.each(order, function(id) {
+			var assess = assessmentsById[id];
+			if (assess._assessments === undefined) return;
+			assess._incompleteAssessments = assess._assessments.length;
+			assess._possibleScore = _.reduce(assess._assessmentModels, function(sum, item) {
+				return sum+=item._possibleScore*item._assessmentWeight;
+			},assess._possibleScore);
+		});
+
 
 
 		//Setup public model
@@ -229,15 +278,35 @@ define(function(require) {
 		if ( _.values(assessments).length === 0 ) return;
 
 		_.each(assessments, function (assess, key) {
-			var wasComplete = assess._isComplete;
-
-			if (!assess.calculateIsComplete(assess)) return;
 
 			assess.calculateScore(assess);
+
+			if (!assess.calculateIsComplete(assess)) {
+				Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
+				return;
+			}
 
 			_.defer(function() { 
 				Adapt.trigger("diffuseAssessment:assessmentComplete", assess);
 			});
+
+		});
+
+	});
+
+	Adapt.on("diffuseAssessment:assessmentCalculate", function(assessment) {
+
+		//Calculate parent assessment completion on child assessment completion
+		var parentAssessments = assessment._parents;
+
+		if (parentAssessments === undefined) return;
+		if ( _.values(parentAssessments).length === 0 ) return;
+
+		_.each(parentAssessments, function (assess, key) {
+
+			assess.calculateScore(assess);
+
+			Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
 
 		});
 
@@ -253,9 +322,12 @@ define(function(require) {
 
 		_.each(parentAssessments, function (assess, key) {
 			
-			if (!assess.calculateIsComplete(assess)) return;
-
 			assess.calculateScore(assess);
+
+			if (!assess.calculateIsComplete(assess)) {
+				Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
+				return;
+			}
 
 			Adapt.trigger("diffuseAssessment:assessmentComplete", assess);
 
