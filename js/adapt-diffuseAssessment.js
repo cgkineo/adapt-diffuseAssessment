@@ -22,11 +22,9 @@ define(function(require) {
 		_parents: undefined,
 		_componentModels: undefined,
 		_components: undefined,
-		_feedback: undefined,
 		_id: undefined,
 		_isComplete: false,
 		_parentId: undefined,
-		title: "",
 
 		calculateScore: function() {
 			//If no other incomplete components in assessment
