@@ -143,9 +143,14 @@ Assessment Model:
 	_isComplete: false,
 	_parentId: "course", //element (page/article/block) id
 	_parents: [], //parent assessments
+	_assessmentWeight: 1,
 	_possibleScore: 0, //total possible score
-	_score: 0, //total score at completion
-	_scoreAsPercent: 0, //percentage score
+	_possibleCompleted: 0, //total possible completion
+	_score: 0, //total score at completion  (adjusted by _assessmentWeight)
+	_scoreAsPercent: 0, //percentage score  (adjusted by _assessmentWeight)
+	_completed: 0, //total completion (adjusted by _assessmentWeight)
+	_completedAsPercent: 0, //percentage completed  (adjusted by _assessmentWeight)
+
 	calculateIsComplete(), //function to set _isComplete
 	calculateScore() //function to set _score and _scoreAsPercent
 }
