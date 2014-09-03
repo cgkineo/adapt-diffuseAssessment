@@ -45,6 +45,14 @@ Adapt.diffuseAssessment.getAssessmentsByComponentId(id); //will return all asses
 Adapt.diffuseAssessment.model;
 ```
 
+##Events:
+```
+diffuseAssessment:initialized(diffuseAssessmentPublicInterface)
+diffuseAssessment:interactionComplete(componentModel)
+diffuseAssessment:assessmentCalculate(assessmentModel)
+diffuseAssessment:assessmentComplete(assessmentModel)
+```
+
 ###Models
 
 Global Model:
@@ -140,6 +148,10 @@ Assessment Model:
 	},
 	_components: [], //components directly from page/article/block json
 	_id: "", //assessment id directly from page/article/block json
+	_completeComponents: 0,
+	_completeAssessments: 0,
+	_incompleteComponents: 0,
+	_incompleteAssessments: 0,
 	_isComplete: false,
 	_parentId: "course", //element (page/article/block) id
 	_parents: [], //parent assessments
