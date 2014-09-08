@@ -4,34 +4,7 @@
     "_assessments": [ 
         {
             "_id": "assessment1",
-            "title": "Global assessment number 1",
             "_assessmentWeight": 1,
-            "_feedback": [
-                {
-                    "_forScore": {
-                        "_max": 1,
-                        "_min": 1
-                    },
-                    "_forScoreAsPercent": {
-                        "_min": 100,
-                        "_max": 100
-                    },
-                    "title": "{{_scoreAsPercent}}% Well done!",
-                    "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
-                },
-                {
-                    "_forScore": {
-                        "_min": 0,
-                        "_max": 0
-                    },
-                    "_forScoreAsPercent": {
-                        "_min": 0,
-                        "_max": 0
-                    },
-                    "title": "{{_scoreAsPercent}}% Oops!",
-                    "body": "Unfortunately this score is not really very good!"
-                }
-            ],
             "_assessments": [ "assessment2" ]
         }
     ]
@@ -42,37 +15,9 @@
 "_diffuseAssessment": {
     "_isEnabled": true,
     "_id": "assessment2",
-    "title": "Assessment for this section",
     "_assessmentWeight": 1,
-    "_feedback": [
-        {
-            "_forScore": {
-                "_min": 1,
-                "_max": 1
-            },
-            "_forScoreAsPercent": {
-                "_min": 100,
-                "_max": 100
-            },
-            "title": "{{_scoreAsPercent}}% Well done!",
-            "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
-        },
-        {
-            "_forScore": {
-                "_min": 0,
-                "_max": 0
-            },
-            "_forScoreAsPercent": {
-                "_min": 0,
-                "_max": 0
-            },
-            "title": "{{_scoreAsPercent}}% Oops!",
-            "body": "Unfortunately this score is not really very good!"
-        }
-    ],
     "_components": [ "c-75" ]
 }
-
 
 //results, to go in components.json
 {
@@ -89,7 +34,29 @@
     "_diffuseAssessment": {
         "_assessmentId": "assessment2",
         "_isResetOnRevisit": true,
-        "_isDisplayAsImage": true
+        "_isDisplayAsImage": true,
+         "_isPrintable": true,
+        "printButtonText": "Print/Save",
+        "printTitle": "Results",
+        "printInstructions": "Select the image to save or print",
+        "_feedback": [
+            {
+                "_forScoreAsPercent": {
+                    "_min": 100,
+                    "_max": 100
+                },
+                "title": "{{_scoreAsPercent}}% Well done!",
+                "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
+            },
+             {
+                "_forScoreAsPercent": {
+                    "_min": 0,
+                    "_max": 0
+                },
+                "title": "{{_scoreAsPercent}}% Oops!",
+                "body": "Unfortunately this score is not really very good!"
+            }
+        ]
     },
     "_pageLevelProgress": {
         "_isEnabled": false

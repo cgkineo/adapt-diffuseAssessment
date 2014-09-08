@@ -18,6 +18,13 @@ define(function(require) {
 		_score: 0,
 		_scoreAsPercent: 0,
 		_possibleScore: 0,
+		_completed: 0,
+		_completedAsPercent: 0,
+		_possibleCompleted: 0,
+		_descendentComponents: 0,
+		_descendentComponentModels: undefined,
+		_completeDescendentComponents: 0,
+		_incompleteDescendentComponents: 0,
 		_completeComponents: 0,
 		_completeAssessments: 0,
 		_incompleteComponents: 0,
@@ -33,20 +40,29 @@ define(function(require) {
 		calculateScore: function() {
 			//If no other incomplete components in assessment
 			this._score = 0;
+			this._completed = 0;
 
 			if (this._componentModels !== undefined) {
-				this._score =_.reduce(this._componentModels.toJSON(), function(sum, item) {
+				this._score =_.reduce(this._componentModels, function(sum, item) {
 					return sum+=item._score;
 				}, this._score);
+				this._completed = _.reduce(this._assessmentModels, function(sum, item) {
+					return sum+=item._completeComponents;
+				}, this._completed);
 			}
 
 			if (this._assessmentModels !== undefined) {
 				this._score =_.reduce(this._assessmentModels, function(sum, item) {
 					return sum+=item._score*item._assessmentWeight;
 				}, this._score);
+				this._completed = _.reduce(this._assessmentModels, function(sum, item) {
+					if (item._descendentComponents === 0) return  sum+=item._completeComponents*item._assessmentWeight;
+					else return sum+=item._completeDescendentComponents*item._assessmentWeight;
+				}, this._completed);
 			}
 
 			this._scoreAsPercent = (100/this._possibleScore) * this._score;
+			this._completedAsPercent = (100/this._possibleCompleted) * this._completed;
 
 			return this;
 		},
@@ -54,7 +70,7 @@ define(function(require) {
 		calculateIsComplete: function() {
 			var rtn = false;
 			if (this._componentModels !== undefined) {
-				var inCompletes = this._componentModels.where({ _isComplete : false });
+				var inCompletes = _.where(this._componentModels, { _isComplete : false });
 				this._incompleteComponents = inCompletes.length;
 				this._completeComponents = this._components.length - inCompletes.length;
 				if (inCompletes.length !== 0) return false;
@@ -63,6 +79,14 @@ define(function(require) {
 				var inCompletes = _.where(this._assessmentModels, { _isComplete : false });
 				this._incompleteAssessments = inCompletes.length;
 				this._completeAssessments = this._assessments.length - inCompletes.length;
+				this._completeDescendentComponents = _.reduce(this._assessmentModels, function(sum, item) {
+					if (item._descendentComponents === 0) return  sum+=item._completeComponents;
+					else return sum+=item._completeDescendentComponents;
+				}, 0);
+				this._incompleteDescendentComponents = _.reduce(this._assessmentModels, function(sum, item) {
+					if (item._descendentComponents === 0) return sum+=item._incompleteComponents;
+					else return sum+=item._incompleteDescendentComponents;
+				}, 0);
 				if (inCompletes.length !== 0) return false;
 			}
 			this._isComplete = true;
@@ -155,13 +179,15 @@ define(function(require) {
 			_.each(assess._components, function(componentId) {
 				if (course._assessmentsByComponentId[componentId] === undefined) course._assessmentsByComponentId[componentId] = {};
 				course._assessmentsByComponentId[componentId][assess._id] = assess;
-				componentModels.push(Adapt.findById(componentId));
+				componentModels.push(Adapt.findById(componentId).toJSON());
 			});
+			assess._descendentComponents = 0;
 			assess._incompleteComponents = assess._components.length;
-			assess._componentModels = new Backbone.Collection(componentModels);
-			assess._possibleScore = _.reduce(assess._componentModels.toJSON(), function(sum, item) {
-				return sum+=item._questionWeight;
+			assess._componentModels = componentModels;
+			assess._possibleScore = _.reduce(assess._componentModels, function(sum, item) {
+				return sum+=item._questionWeight * 1; //TODO: times by item question max score (assumed 1)
 			},0);
+			assess._possibleCompleted = assess._components.length;
 		});
 
 		//Begin to sort assessments by heirarchy
@@ -213,10 +239,28 @@ define(function(require) {
 			var assess = assessmentsById[id];
 			if (assess._assessments === undefined) return;
 			assess._incompleteAssessments = assess._assessments.length;
+			assess._descendentComponentModels = [];//new Backbone.Collection();
+			_.each(assess._assessmentModels, function(item) {
+				if (item._descendentComponents === 0) assess._descendentComponentModels = assess._descendentComponentModels.concat(item._componentModels);
+				else assess._descendentComponentModels = assess._descendentComponentModels.concat(item._descendentComponentModels);
+			});
+			assess._descendentComponents = _.reduce(assess._assessmentModels, function(sum, item) {
+				if (item._descendentComponents === 0) return sum+=item._components.length;
+				else return sum+=item._descendentComponents;
+			}, 0);
+			assess._incompleteDescendentComponents = _.reduce(assess._assessmentModels, function(sum, item) {
+				if (item._descendentComponents === 0) return sum+=item._incompleteComponents;
+				else return sum+=item._incompleteDescendentComponents;
+			}, 0);
 			assess._possibleScore = _.reduce(assess._assessmentModels, function(sum, item) {
 				return sum+=item._possibleScore*item._assessmentWeight;
 			},assess._possibleScore);
+			assess._possibleCompleted = _.reduce(assess._assessmentModels, function(sum, item) {
+				return sum+=item._possibleCompleted*item._assessmentWeight;
+			},assess._possibleCompleted);
 		});
+
+		course._order = order;
 
 
 
@@ -279,6 +323,11 @@ define(function(require) {
 
 		_.each(assessments, function (assess, key) {
 
+			var componentReferences = _.where(assess._componentModels, { "_id": id });
+			_.each(componentReferences, function (ref) {
+				_.extend(ref, model.toJSON());
+			});
+
 			assess.calculateScore(assess);
 
 			if (!assess.calculateIsComplete(assess)) {
@@ -305,6 +354,8 @@ define(function(require) {
 		_.each(parentAssessments, function (assess, key) {
 
 			assess.calculateScore(assess);
+
+			assess.calculateIsComplete(assess);
 
 			Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
 
