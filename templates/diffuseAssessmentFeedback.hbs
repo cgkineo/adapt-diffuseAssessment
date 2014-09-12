@@ -1,3 +1,6 @@
 <div class="da-feedback-inner component-inner">
     {{> component this}}
+    {{#if _diffuseAssessment._isPrintable}}
+    <div class="printbutton not-printable"><button class="not-mobile" href="#">{{_diffuseAssessment.printButtonText}}</button><button class="mobile-only" href="#"><i class="icon icon-save"></i></button></div>
+    {{/if}}
 </div>

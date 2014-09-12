@@ -46,8 +46,8 @@ define(function(require) {
 				this._score =_.reduce(this._componentModels, function(sum, item) {
 					return sum+=item._score;
 				}, this._score);
-				this._completed = _.reduce(this._assessmentModels, function(sum, item) {
-					return sum+=item._completeComponents;
+				this._completed = _.reduce(this._componentModels, function(sum, item) {
+					return sum+=(item._isComplete ? 1 : 0);
 				}, this._completed);
 			}
 
@@ -339,6 +339,10 @@ define(function(require) {
 				Adapt.trigger("diffuseAssessment:assessmentComplete", assess);
 			});
 
+		});
+
+		_.defer(function() { 
+			Adapt.trigger("diffuseAssessment:recalculated");
 		});
 
 	});

@@ -9,15 +9,18 @@ define(function(require) {
     var HBS = require('extensions/adapt-diffuseAssessment/js/handlebars-v1.3.0');
     
     var DAFeedback = ComponentView.extend({
+        events: {
+            "click .printbutton": "onPrintClick"
+        },
 
-    	postRender: function() {
+        postRender: function() {
 
             this.$el.addClass("not-complete");
 
             this.listenTo(Adapt, "diffuseAssessment:assessmentComplete", this.assessmentComplete);
             this.listenTo(Adapt, "device:resize device:change", this.resize);
             this.listenTo(Adapt, "remove", this.remove);
-    		this.setReadyStatus();
+            this.setReadyStatus();
 
             var model = this.model.get("_diffuseAssessment");
             var assess = model._assessmentId;
@@ -30,7 +33,7 @@ define(function(require) {
 
             if (!model._isResetOnRevisit && assessment._isComplete) this.assessmentComplete(assessment);
 
-    	},
+        },
 
         assessmentComplete: function(assess) {
             this.setCompletionStatus();
@@ -103,6 +106,31 @@ define(function(require) {
                 else clone.css("width", thisHandle.$el.parent().width() + "px");
             });
 
+        },
+
+        onPrintClick: function () {
+            var thisHandle = this;
+            var model = this.model.get("_diffuseAssessment");
+
+            html2img(this.$el, function(data) {
+
+                Adapt.trigger("printPreview:open", {
+                    title: model.printTitle,
+                    instructions: model.printInstructions,
+                    _rendered: data,
+                    postRender: function(settings) {
+
+                        var img = new Image();
+                        img.src = settings._rendered;
+                        this.$el.html("").append(img);
+
+                    }
+                })
+
+            }, function(clone) {
+                if (thisHandle.model.get("_layout") !== "full") clone.css("width", thisHandle.$el.parent().width() / 2 + "px");
+                else clone.css("width", thisHandle.$el.parent().width() + "px");
+            });
         }
 
     });

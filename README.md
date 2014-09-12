@@ -186,7 +186,11 @@ Example Feedback Component (to go in component json):
     "_diffuseAssessment": {
         "_assessmentId": "assessment2",
         "_isResetOnRevisit": true,
-        "_isDisplayAsImage": true,
+        "_isDisplayAsImage": false,
+        _isPrintable": true,
+        "printButtonText": "Print/Save",
+        "printTitle": "Results",
+        "printInstructions": "Select the image to save or print",
         _feedback: { 
 		{
 	            "_forScore": {	//use either _forScore or _forScoreAsPercent
