@@ -51,6 +51,7 @@ diffuseAssessment:initialized(diffuseAssessmentPublicInterface)
 diffuseAssessment:interactionComplete(componentModel)
 diffuseAssessment:assessmentCalculate(assessmentModel)
 diffuseAssessment:assessmentComplete(assessmentModel)
+diffuseAssessment:recalculated
 ```
 
 ###Models
