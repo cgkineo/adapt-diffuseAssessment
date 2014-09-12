@@ -192,30 +192,30 @@ Example Feedback Component (to go in component json):
         "printTitle": "Results",
         "printInstructions": "Select the image to save or print",
         _feedback: { 
-		{
+            {
 	            "_forScore": {	//use either _forScore or _forScoreAsPercent
 	                "_max": 1,
 	                "_min": 1
 	            },
-	            "_forScoreAsPercent": {
-	                "_min": 100,
-	                "_max": 100
-	            },
-	            "title": "{{_scoreAsPercent}}% Well done!",
-	            "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
-	        },
-	        {
+                "_forScoreAsPercent": {
+                    "_min": 100,
+                    "_max": 100
+                },
+                "title": "{{_scoreAsPercent}}% Well done!",
+                "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
+            },
+             {
 	            "_forScore": { //use either _forScore or _forScoreAsPercent
 	                "_min": 0,
 	                "_max": 0
 	            },
-	            "_forScoreAsPercent": {
-	                "_min": 0,
-	                "_max": 0
-	            },
-	            "title": "{{_scoreAsPercent}}% Oops!",
-	            "body": "Unfortunately this score is not really very good!"
-	        }
+                "_forScoreAsPercent": {
+                    "_min": 0,
+                    "_max": 0
+                },
+                "title": "{{_scoreAsPercent}}% Oops!",
+                "body": "Unfortunately this score is not really very good!"
+            }
 	}
     },
     "_pageLevelProgress": {
