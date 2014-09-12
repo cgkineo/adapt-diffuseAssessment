@@ -3,18 +3,57 @@
     "_isEnabled": true,
     "_assessments": [ 
         {
-            "_id": "assessment1",
+            "_id": "total",
+            "_assessments": [ "knowledgeQuestions", "summativeQuestions" ]
+        },
+        {
+            "_id": "bank1",
             "_assessmentWeight": 1,
-            "_assessments": [ "assessment2" ]
+            "_assessments": [ "a40assessment", "a41assessment" ]
+        },
+        {
+            "_id": "bank2",
+            "_assessmentWeight": 1,
+            "_assessments": [ "a50assessment", "a51assessment" ]
+        },
+        {
+            "_id": "knowledgeQuestions",
+            "_assessmentWeight": 1,
+            "_assessments": [ "a40assessment", "a50assessment" ]
+        },
+        {
+            "_id": "summativeQuestions",
+            "_assessmentWeight": 1,
+            "_assessments": [ "a41assessment", "a51assessment" ]
+        },
+        {
+            "_id": "a40assessment",
+            "_assessmentWeight": 1,
+            "_components": [ "c-75" ]
+        },
+        {
+            "_id": "a41assessment",
+            "_assessmentWeight": 1,
+            "_components": [ "c-77" ]
+        },
+        {
+            "_id": "a50assessment",
+            "_assessmentWeight": 1,
+            "_components": [ "c-85" ]
+        },
+        {
+            "_id": "a51assessment",
+            "_assessmentWeight": 1,
+            "_components": [ "c-87" ]
         }
     ]
-}
+},
 
 
-// To go in course/page/article/block
+//OPTIONAL ALTERNATIVE TO ABOVE: to go in course/page/article/block
 "_diffuseAssessment": {
     "_isEnabled": true,
-    "_id": "assessment2",
+    "_id": "a41assessment",
     "_assessmentWeight": 1,
     "_components": [ "c-75" ]
 }
@@ -32,10 +71,10 @@
     "body": "",
     "instruction": "",
     "_diffuseAssessment": {
-        "_assessmentId": "assessment2",
+        "_assessmentId": "a41assessment",
         "_isResetOnRevisit": true,
         "_isDisplayAsImage": true,
-         "_isPrintable": true,
+        "_isPrintable": true,
         "printButtonText": "Print/Save",
         "printTitle": "Results",
         "printInstructions": "Select the image to save or print",
