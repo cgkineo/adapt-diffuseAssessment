@@ -1,8 +1,9 @@
 /*
- * adapt-diffuseAssessmentFeedback
- * License - https://github.com/adaptlearning/adapt_framework/blob/master/LICENSE
- * Maintainers - Oliver Foster <oliver.foster@kineo.com>
- */
+* adapt-diffuseAssessment
+* License - http://github.com/adaptlearning/adapt_framework/LICENSE
+* Maintainers - Oliver Foster <oliver.foster@kineo.com>
+*/
+
 define(function(require) {
     var ComponentView = require('coreViews/componentView');
     var Adapt = require('coreJS/adapt');
