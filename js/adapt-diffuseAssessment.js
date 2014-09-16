@@ -94,6 +94,7 @@ define(function(require) {
 		}
 	};
 
+	var _isEnabled = false;
 
 	var diffuseAssessment = new (Backbone.View.extend({
 		model: new Backbone.Model(),
@@ -117,6 +118,8 @@ define(function(require) {
 		var course = Adapt.course.get("_diffuseAssessment");
 
 		if (course === undefined || course._isEnabled === false) return;
+
+		_isEnabled = true;
 
 		//Fetch all pages, articles and blocks
 		var assets = {};
@@ -273,6 +276,7 @@ define(function(require) {
 
 	Adapt.on("componentView:postRender", function(view) {
 
+		if (!_isEnabled) return;
 		//Setup assessment listeners
 
 		var model = view.model;
@@ -310,6 +314,8 @@ define(function(require) {
 	});
 
 	Adapt.on("diffuseAssessment:interactionComplete", function(model) {
+
+		if (!_isEnabled) return;
 
 		//Calculate assessment completion on component interaction
 
@@ -349,6 +355,8 @@ define(function(require) {
 
 	Adapt.on("diffuseAssessment:assessmentCalculate", function(assessment) {
 
+		if (!_isEnabled) return;
+
 		//Calculate parent assessment completion on child assessment completion
 		var parentAssessments = assessment._parents;
 
@@ -368,6 +376,8 @@ define(function(require) {
 	});
 
 	Adapt.on("diffuseAssessment:assessmentComplete", function(assessment) {
+
+		if (!_isEnabled) return;
 
 		//Calculate parent assessment completion on child assessment completion
 		var parentAssessments = assessment._parents;
@@ -391,6 +401,8 @@ define(function(require) {
 	});
 
 	Adapt.on("remove", function() {
+		if (!_isEnabled) return;
+		
 		//Stop listening got component interactions
 		diffuseAssessment.stopListening();
 	})
