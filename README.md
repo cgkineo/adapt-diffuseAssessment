@@ -3,7 +3,7 @@ adapt-diffuseAssessment
 
 Extension + Results Component
 
-Results Component Dependencies:
+Results Component Dependencies:  
 [adapt-printPreview](https://github.com/cgkineo/adapt-printPreview)  
 [adapt-html2img](https://github.com/cgkineo/adapt-html2img)  
 
