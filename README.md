@@ -3,7 +3,9 @@ adapt-diffuseAssessment
 
 Extension + Results Component
 
-Dependencies: [adapt-html2img](https://github.com/cgkineo/adapt-html2img)
+Results Component Dependencies:
+[adapt-printPreview](https://github.com/cgkineo/adapt-printPreview)  
+[adapt-html2img](https://github.com/cgkineo/adapt-html2img)  
 
 Multiple, centralized, cross-element (page/article/block) assessments.
 
