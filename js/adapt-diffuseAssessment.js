@@ -363,7 +363,7 @@ define(function(require) {
 		diffuseAssessment.listenTo(model, "change:_isInteractionsComplete", function(model, change) {
 			if (model.get("_interactions") === undefined || model.get("_hackInteractions")) {
 				if (model.get("_interactions") === undefined ) model.set("_interactions", 0)
-				model.set("_interactions", model.get("_interactions") + 1);
+				model.set("_interactions", model.get("_interactions") + model.get("_attempts") - model.get("_attemptsLeft"));
 				model.set("_hackInteractions", true);
 			}
 			Adapt.trigger("diffuseAssessment:interactionComplete", model, change);
@@ -407,7 +407,7 @@ define(function(require) {
 		});
 
 		_.defer(function() { 
-			Adapt.trigger("diffuseAssessment:recalculated");
+			Adapt.trigger("diffuseAssessment:recalculated", diffuseAssessment );
 		});
 
 	});
