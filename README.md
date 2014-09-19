@@ -11,33 +11,6 @@ Multiple, centralized, cross-element (page/article/block) assessments.
 
 Build assessment trees. Output the results for an assessment on any/many pages as a component. Use the public interface to extend.
 
-Example Assessment Tree:
-```
-COURSE		  PAGE 			  COMPONENT
-assessment1 > assessment2		> c-125
-							> c-126
-							> c-127
-							> c-128
-							.
-							.
-							.
-
-			> assessment3	> c-209
-							> c-210
-							> c-211
-							> c-212
-							.
-							.
-							.
-			.
-			.
-			.
-.
-.
-.
-
-```
-
 ###Public Interface:
 ```
 Adapt.diffuseAssessment.getAssessments(); //will return all assessments
@@ -67,65 +40,16 @@ Global Model:
 			assessment2: {
 
 			}
-		},
-		c-126: {
-			assessment2: {
-			
-			}
-		},
-		c-127: {
-			assessment2: {
-			
-			}
-		},
-		c-128: {
-			assessment2: {
-			
-			}
-		},
-		c-209: {
-			assessment3: {
-
-			}
-		},
-		c-210: {
-			assessment3: {
-			
-			}
-		},
-		c-211: {
-			assessment3: {
-			
-			}
-		},
-		c-212: {
-			assessment3: {
-			
-			}
 		}
 	},
 	_assessmentsById: { //sorted by assessment id
 		assessment1: {
-
-		},
-		assessment2: {
-
-		},
-		assessment3: {
 
 		}
 	},
 	_assessmentsByParentId: { //sorted by parent element id
 		co-45: {
 			assessment3: {
-
-			},
-			assessment2: {
-
-			}
-		},
-		course: {
-			assessment1: {
 
 			}
 		}
