@@ -72,15 +72,15 @@
     "_component": "diffuseAssessmentFeedback",
     "_classes": "",
     "_layout": "full",
-    "title": "",
-    "displayTitle": "",
-    "body": "",
+    "title": " ",
+    "displayTitle": " ",
+    "body": " ",
     "instruction": "",
     "_diffuseAssessment": {
         "_assessmentId": "a41assessment",
         "_isResetOnRevisit": true,
-        "_isDisplayAsImage": true,
-        "_isPrintable": true,
+        "_isDisplayAsImage": false,
+        "_isPrintable": false,
         "printButtonText": "Print/Save",
         "printTitle": "Results",
         "printInstructions": "Select the image to save or print",
@@ -93,7 +93,7 @@
                 "title": "{{_scoreAsPercent}}% Well done!",
                 "body": "Good job on completing this question! You scored {{_scoreAsPercent}}%"
             },
-             {
+            {
                 "_forScoreAsPercent": {
                     "_min": 0,
                     "_max": 0
@@ -107,3 +107,40 @@
         "_isEnabled": false
     }
 },
+
+//image output
+ {
+    "_id": "c-115",
+    "_parentId": "b-90",
+    "_type": "component",
+    "_type": "component",
+    "_component": "diffuseAssessmentFeedback",
+    "_classes": "feedbackImage",
+    "_layout": "right",
+    "title": " ",
+    "displayTitle": " ",
+    "body": " ",
+    "instruction": "",
+    "_diffuseAssessment": {
+        "_assessmentId": "finalPage",
+        "_isResetOnRevisit": true,
+        "_isDisplayAsImage": false,
+        "_isPrintable": false,
+        "printButtonText": "Print/Save",
+        "printTitle": "Results",
+        "printInstructions": "Select the image to save or print",
+        "_feedback": [
+            {
+                "_forPoints": {
+                    "_min": 0,
+                    "_max": 10000000
+                },
+                "title": "",
+                "body": "<img src=\"assets/feedback-{{_currentPoints}}.png\"></src>"
+            }
+        ]
+    },
+    "_pageLevelProgress": {
+        "_isEnabled": false
+    }
+}

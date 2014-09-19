@@ -36,6 +36,14 @@ define(function(require) {
 		_id: undefined,
 		_isComplete: false,
 		_parentId: undefined,
+		_points: undefined,
+		_maxPoints: 0,
+        _currentPoints: 0,
+        _possiblePoints: 0,
+        _averagePoints: 0,
+        _countRightFirstTime: 0,
+        _averagePointsAsPercent: 0,
+        _countRightFirstTimeAsPercent: 0,
 
 		calculateScore: function() {
 			//If no other incomplete components in assessment
@@ -65,6 +73,51 @@ define(function(require) {
 			this._completedAsPercent = (100/this._possibleCompleted) * this._completed;
 
 			return this;
+		},
+
+		processPoints: function() {
+			var _points = this['_points'];
+			if (_points instanceof Array) {
+				var maxPoints = _.max(_points, function(item) { return item._points; })._points;
+				var currentPoints = 0;
+				var countRightFirstTime = 0;
+
+				_.each(this._descendentComponentModels, function(component) {
+					if (component._isCorrect !== true || component._isComplete !== true ) return;							
+		            for (var f = 0; f < _points.length; f++) {
+		            	var item = _points[f];
+		            	if (item._forAttemptsToCorrect !== undefined && component._interactions >= item._forAttemptsToCorrect._min && component._interactions <= item._forAttemptsToCorrect._max) {
+		            		currentPoints = currentPoints + item._points;
+		            		break;
+		            	}
+
+		            }
+		            if (component._interactions == 1) countRightFirstTime++;
+		        });
+		        _.each(this._componentModels, function(component) {
+					if (component._isCorrect !== true || component._isComplete !== true ) return;							
+		            for (var f = 0; f < _points.length; f++) {
+		            	var item = _points[f];
+		            	if (item._forAttemptsToCorrect !== undefined && component._interactions >= item._forAttemptsToCorrect._min && component._interactions <= item._forAttemptsToCorrect._max) {
+		            		currentPoints = currentPoints + item._points;
+		            		break;
+		            	}
+
+		            }
+		            if (component._interactions == 1) countRightFirstTime++;
+		        });
+
+				var possiblePoints = this._completeDescendentComponents * maxPoints;
+		        var averagePoints = (currentPoints === 0 ? 0 : (maxPoints / possiblePoints) * currentPoints);
+
+		        this._maxPoints = maxPoints;
+		        this._currentPoints = currentPoints;
+		        this._possiblePoints = possiblePoints;
+		        this._averagePoints = Math.round(averagePoints*1000) / 1000;
+		        this._countRightFirstTime = countRightFirstTime;
+		        this._averagePointsAsPercent = Math.round((100/maxPoints) * averagePoints);
+		        this._countRightFirstTimeAsPercent = Math.round(this._completeDescendentComponents === 0 ? 0 : (100/this._completeDescendentComponents) * this._countRightFirstTime);
+		    }
 		},
 
 		calculateIsComplete: function() {
@@ -309,6 +362,7 @@ define(function(require) {
 
 		diffuseAssessment.listenTo(model, "change:_isInteractionsComplete", function(model, change) {
 			if (model.get("_interactions") === undefined || model.get("_hackInteractions")) {
+				if (model.get("_interactions") === undefined ) model.set("_interactions", 0)
 				model.set("_interactions", model.get("_interactions") + 1);
 				model.set("_hackInteractions", true);
 			}
@@ -339,6 +393,7 @@ define(function(require) {
 			});
 
 			assess.calculateScore(assess);
+			assess.processPoints();
 
 			if (!assess.calculateIsComplete(assess)) {
 				Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
@@ -369,7 +424,8 @@ define(function(require) {
 
 		_.each(parentAssessments, function (assess, key) {
 
-			assess.calculateScore(assess);
+			assess.calculateScore();
+			assess.processPoints();
 
 			assess.calculateIsComplete(assess);
 
@@ -391,7 +447,8 @@ define(function(require) {
 
 		_.each(parentAssessments, function (assess, key) {
 			
-			assess.calculateScore(assess);
+			assess.calculateScore();
+			assess.processPoints();
 
 			if (!assess.calculateIsComplete(assess)) {
 				Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);

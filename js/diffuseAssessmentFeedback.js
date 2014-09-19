@@ -52,6 +52,9 @@ define(function(require) {
                 } else if (item._forScore !== undefined && item._forScore._max >= assess._score && feedback._forScore._min <= assess._score ) {
                     feedback = item;
                     break;
+                } else if (item._forPoints !== undefined && item._forPoints._max >= assess._currentPoints && item._forPoints._min <= assess._currentPoints ) {
+                    feedback = item;
+                    break;
                 }
             }
 
