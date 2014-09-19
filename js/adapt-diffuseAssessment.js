@@ -44,7 +44,7 @@ define(function(require) {
 
 			if (this._componentModels !== undefined) {
 				this._score =_.reduce(this._componentModels, function(sum, item) {
-					return sum+=item._score;
+					return sum+=(item._score ? item._score : 0);
 				}, this._score);
 				this._completed = _.reduce(this._componentModels, function(sum, item) {
 					return sum+=(item._isComplete ? 1 : 0);
@@ -308,6 +308,10 @@ define(function(require) {
 		if (!shouldListen) return;
 
 		diffuseAssessment.listenTo(model, "change:_isInteractionsComplete", function(model, change) {
+			if (model.get("_interactions") === undefined || model.get("_hackInteractions")) {
+				model.set("_interactions", model.get("_interactions") + 1);
+				model.set("_hackInteractions", true);
+			}
 			Adapt.trigger("diffuseAssessment:interactionComplete", model, change);
 		});
 
