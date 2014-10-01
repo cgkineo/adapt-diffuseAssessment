@@ -314,16 +314,39 @@ define(function(require) {
 			assess._possibleCompleted = _.reduce(assess._assessmentModels, function(sum, item) {
 				return sum+=item._possibleCompleted*item._assessmentWeight;
 			},assess._possibleCompleted);
+
 		});
 
 		course._order = order;
 
 
-
 		//Setup public model
 		diffuseAssessment.model.set(course);
 
-		Adapt.trigger("diffuseAssessment:initialized", diffuseAssessment);
+		_.defer(function() {
+			Adapt.trigger("diffuseAssessment:initialized", diffuseAssessment);
+
+			//perform Initial calculations
+			_.each(order, function (id) {
+
+				var assess = assessmentsById[id];
+
+				assess.calculateScore(assess);
+				assess.processPoints();
+
+				if (!assess.calculateIsComplete(assess)) {
+					Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
+					return;
+				}
+
+				_.defer(function() { 
+					Adapt.trigger("diffuseAssessment:assessmentComplete", assess);
+				});
+
+			});
+		});
+
+		
 
 	});
 
@@ -397,11 +420,13 @@ define(function(require) {
 
 			if (!assess.calculateIsComplete(assess)) {
 				Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
+				Adapt.trigger("diffuseAssessment:assessmentCalculated", assess);
 				return;
 			}
 
 			_.defer(function() { 
 				Adapt.trigger("diffuseAssessment:assessmentComplete", assess);
+				Adapt.trigger("diffuseAssessment:assessmentCompleted", assess);
 			});
 
 		});
@@ -412,7 +437,7 @@ define(function(require) {
 
 	});
 
-	Adapt.on("diffuseAssessment:assessmentCalculate", function(assessment) {
+	Adapt.on("diffuseAssessment:assessmentCalculated", function(assessment) {
 
 		if (!_isEnabled) return;
 
@@ -430,12 +455,13 @@ define(function(require) {
 			assess.calculateIsComplete(assess);
 
 			Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
+			Adapt.trigger("diffuseAssessment:assessmentCalculated", assess);
 
 		});
 
 	});
 
-	Adapt.on("diffuseAssessment:assessmentComplete", function(assessment) {
+	Adapt.on("diffuseAssessment:assessmentCompleted", function(assessment) {
 
 		if (!_isEnabled) return;
 
@@ -452,10 +478,12 @@ define(function(require) {
 
 			if (!assess.calculateIsComplete(assess)) {
 				Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
+				Adapt.trigger("diffuseAssessment:assessmentCalculated", assess);
 				return;
 			}
 
 			Adapt.trigger("diffuseAssessment:assessmentComplete", assess);
+			Adapt.trigger("diffuseAssessment:assessmentCompleted", assess);
 
 		});
 
