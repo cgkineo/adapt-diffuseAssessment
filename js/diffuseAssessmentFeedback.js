@@ -14,6 +14,13 @@ define(function(require) {
             "click .printbutton": "onPrintClick"
         },
 
+        preRender: function() {
+            var thisHandle = this;
+            this.$el.on("inview", function() {
+                thisHandle.setCompletionStatus();
+            })
+        },
+
         postRender: function() {
 
             this.$el.addClass("not-complete");
