@@ -44,6 +44,7 @@ define(function(require) {
         },
 
         assessmentComplete: function(assess) {
+
             this.setCompletionStatus();
 
             var assessment = this.model.get("_diffuseAssessment");
@@ -60,6 +61,9 @@ define(function(require) {
                     feedback = item;
                     break;
                 } else if (item._forPoints !== undefined && item._forPoints._max >= assess._currentPoints && item._forPoints._min <= assess._currentPoints ) {
+                    feedback = item;
+                    break;
+                } else if (item._forGroup !== undefined && item._forGroup == assess._currentGroup ) {
                     feedback = item;
                     break;
                 }
@@ -80,7 +84,6 @@ define(function(require) {
             if (model._isDisplayAsImage) {
 
                 html2img(this.$el, function(data) {
-
                     var img = new Image();
                     img.src = data;
                     $(img).css("cursor", "pointer").attr("id","outputimg");
@@ -88,11 +91,26 @@ define(function(require) {
                     thisHandle.$el.children("#outputimg").remove();
                     thisHandle.$el.append(img);
 
+                    if (assessment._hideUntilComplete) {
+                        thisHandle.$el.hide(0);
+                        thisHandle.$el.removeClass("display-none");
+                        thisHandle.$el.fadeIn(1000);
+                    }
+
                 }, function(clone) {
                     if (thisHandle.model.get("_layout") !== "full") clone.css("width", thisHandle.$el.parent().width() / 2 + "px");
                     else clone.css("width", thisHandle.$el.parent().width() + "px");
                 });
+            } else {
+
+                if (assessment._hideUntilComplete) {
+                    this.$el.css("display", "none");
+                    this.$el.removeClass("display-none");
+                    this.$el.fadeIn(assessment._showAnimationDuration || 2000);
+                }
+
             }
+
 
         },
 

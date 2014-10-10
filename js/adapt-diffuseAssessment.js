@@ -120,6 +120,49 @@ define(function(require) {
 		    }
 		},
 
+		processGrouping: function() {
+			var _grouping = this['_grouping'];
+			if (_grouping instanceof Array) {
+
+				var currentGroup = "";
+
+				var scores = {};
+
+				_.each(this._descendentComponentModels, function(component) {
+					if (component._isCorrect !== true || component._isComplete !== true || component._useItemScores !== true || component._score === undefined) return;							
+					if (score[component._score] === undefined) scores[component._score] = 0;
+					scores[component._score]++;
+		        });
+		        _.each(this._componentModels, function(component) {
+					if (component._isCorrect !== true || component._isComplete !== true || component._useItemScores !== true || component._score === undefined) return;							
+		           	if (scores[component._score] === undefined) scores[component._score] = 0;
+					scores[component._score]++; 
+		        });
+
+	            for (var f = 0; f < _grouping.length; f++) {
+	            	var item = _grouping[f];
+	            	if (item._whereItemScoresOccur !== undefined) {
+	            		var passed = true;
+	            		for (var s in item._whereItemScoresOccur) {
+	            			if (scores[s] === undefined && item._whereItemScoresOccur[s]._min !== 0) {
+	            				passed = false;
+	            				break;
+	            			} else if (scores[s] < item._whereItemScoresOccur[s]._min || scores[s] > item._whereItemScoresOccur[s]._max) {
+	            				passed = false;
+	            				break;
+	            			}
+	            		}
+	            		if (passed) {
+	            			currentGroup = item._group;
+	            			break;
+	            		}
+	            	}
+	            }
+
+		        this._currentGroup = currentGroup;
+		    }
+		},
+
 		calculateIsComplete: function() {
 			var rtn = false;
 			if (this._componentModels !== undefined) {
@@ -241,7 +284,14 @@ define(function(require) {
 			assess._incompleteComponents = assess._components.length;
 			assess._componentModels = componentModels;
 			assess._possibleScore = _.reduce(assess._componentModels, function(sum, item) {
-				return sum+=item._questionWeight * 1; //TODO: times by item question max score (assumed 1)
+				if (item._useItemScores && item._selectable==1) {
+					return sum+=_.max(item._items, function(item) {
+	                    return item._score;
+	                })._score * item._questionWeight;
+	            //need to do selectable > 1;
+				} else {
+					return sum+=item._questionWeight * 1; //TODO: times by item question max score (assumed 1)
+				}
 			},0);
 			assess._possibleCompleted = assess._components.length;
 		});
@@ -333,6 +383,7 @@ define(function(require) {
 
 				assess.calculateScore(assess);
 				assess.processPoints();
+				assess.processGrouping();
 
 				if (!assess.calculateIsComplete(assess)) {
 					Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
@@ -417,6 +468,7 @@ define(function(require) {
 
 			assess.calculateScore(assess);
 			assess.processPoints();
+			assess.processGrouping();
 
 			if (!assess.calculateIsComplete(assess)) {
 				Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
@@ -451,6 +503,7 @@ define(function(require) {
 
 			assess.calculateScore();
 			assess.processPoints();
+			assess.processGrouping();
 
 			assess.calculateIsComplete(assess);
 
@@ -475,6 +528,7 @@ define(function(require) {
 			
 			assess.calculateScore();
 			assess.processPoints();
+			assess.processGrouping();
 
 			if (!assess.calculateIsComplete(assess)) {
 				Adapt.trigger("diffuseAssessment:assessmentCalculate", assess);
