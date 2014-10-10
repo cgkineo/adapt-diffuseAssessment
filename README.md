@@ -534,8 +534,8 @@ NOTE! To use grouping an ammended mcq component is required, this is so that it 
 ```
 
 
-####Example Points Systems - 5 MCQS, SCORES 1-3, 6 GROUPINGS, 6 FEEDBACKS:
-NOTE! To use grouping an ammended mcq component is required, this is so that it can have multiple correct scores and scores bigger than 1. (2014-10-07 OLLIE: These changes are in the process of being pushed to open source);
+####Example Points Systems - 2 MCQS, POINTS 2,1 FOR ATTEMPTS TILL CORRECT 1,+1, 5 FEEDBACKS:
+NOTES: maximum points = mcqs*max points = 4, minimum points = 0.
 ```
 //to go in course.json
 "_diffuseAssessment": {
@@ -637,7 +637,7 @@ NOTE! To use grouping an ammended mcq component is required, this is so that it 
     }
 }
 
-//MCQ COMPONENT 1: c-87
+//MCQ COMPONENT 2: c-87
 {
     "_id": "c-87",
     "_parentId": "b-75",
