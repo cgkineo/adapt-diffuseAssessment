@@ -45,6 +45,13 @@ define(function(require) {
         _averagePointsAsPercent: 0,
         _countRightFirstTimeAsPercent: 0,
 
+        process: function() {
+        	this.calculateIsComplete();
+        	this.calculateScore();
+        	this.processPoints();
+        	this.processGrouping();
+        },
+
 		calculateScore: function() {
 			//If no other incomplete components in assessment
 			this._score = 0;
@@ -124,17 +131,22 @@ define(function(require) {
 			var _grouping = this['_grouping'];
 			if (_grouping instanceof Array) {
 
-				var currentGroup = "";
+				var currentGroup;
+				if (this._isMultipleMatches) {
+					currentGroup = [];
+				} else {
+					currentGroup = "";
+				}
 
 				var scores = {};
 
 				_.each(this._descendentComponentModels, function(component) {
-					if (component._isCorrect !== true || component._isComplete !== true || component._useItemScores !== true || component._score === undefined) return;							
+					if (((component._isCorrect !== true || component._isComplete !== true) && component._isAlwaysScore !== true)  || component._useItemScores !== true || component._score === undefined) return;							
 					if (score[component._score] === undefined) scores[component._score] = 0;
 					scores[component._score]++;
 		        });
 		        _.each(this._componentModels, function(component) {
-					if (component._isCorrect !== true || component._isComplete !== true || component._useItemScores !== true || component._score === undefined) return;							
+					if (((component._isCorrect !== true || component._isComplete !== true)  && component._isAlwaysScore !== true) || component._useItemScores !== true || component._score === undefined) return;							
 		           	if (scores[component._score] === undefined) scores[component._score] = 0;
 					scores[component._score]++; 
 		        });
@@ -153,8 +165,12 @@ define(function(require) {
 	            			}
 	            		}
 	            		if (passed) {
-	            			currentGroup = item._group;
-	            			break;
+	            			if (this._isMultipleMatches) {
+	            				currentGroup.push(item._group);
+	            			} else  {
+	            				currentGroup = item._group;
+	            				break;
+	            			}
 	            		}
 	            	}
 	            }

@@ -39,7 +39,9 @@ define(function(require) {
 
             var assessment = Adapt.diffuseAssessment.getAssessmentById(assess);
 
-            if (!model._isResetOnRevisit && assessment._isComplete) this.assessmentComplete(assessment);
+            //if (!model._isResetOnRevisit && assessment._isComplete) 
+                assessment.process();
+                this.assessmentComplete(assessment);
 
         },
 
@@ -63,17 +65,40 @@ define(function(require) {
                 } else if (item._forPoints !== undefined && item._forPoints._max >= assess._currentPoints && item._forPoints._min <= assess._currentPoints ) {
                     feedback = item;
                     break;
-                } else if (item._forGroup !== undefined && item._forGroup == assess._currentGroup ) {
-                    feedback = item;
-                    break;
+                } else if (item._forGroup !== undefined && assess._currentGroup.indexOf(item._forGroup) > -1 ) {
+                    if (assess._isMultipleMatches) {
+                        if (feedback == undefined) feedback = [];
+                        feedback.push(item);
+                    } else {
+                        feedback = item;
+                        break;
+                    }
                 }
             }
 
             if (feedback === undefined) return;
 
-            
-            this.$el.find(".component-title-inner").html(HBS.compile(feedback.title)(assess));
-            this.$el.find(".component-body-inner").html(HBS.compile(feedback.body)(assess));
+            if (_.isArray(feedback)) {
+                var body = "";
+                _.each(feedback, function(item) {
+                    if (item._isOnlyAlone) {
+                        if (feedback.length > 1) return;
+                    }
+                    body+=HBS.compile(item.body)(assess);
+                });
+                var title = HBS.compile(this.model.get("title"))(assess);
+                this.$el.find(".component-title-inner").html(title);
+                if (assessment._feedbackHeader) {
+                    body = assessment._feedbackHeader+body;
+                }
+                if (assessment._feedbackFooter) {
+                    body+= assessment._feedbackFooter;
+                }
+                this.$el.find(".component-body-inner").html(body);
+            } else {
+                this.$el.find(".component-title-inner").html(HBS.compile(feedback.title)(assess));
+                this.$el.find(".component-body-inner").html(HBS.compile(feedback.body)(assess));
+            }
 
             var thisHandle = this;
             this.$el.removeClass("not-complete");
@@ -110,7 +135,6 @@ define(function(require) {
                 }
 
             }
-
 
         },
 
