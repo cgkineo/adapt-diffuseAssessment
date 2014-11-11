@@ -12,6 +12,11 @@ define(function(require) {
 	
 	var uid = 0;
 
+	function roundTo(num, to) {    
+	    return +(Math.round(num + ("e+" + to))  + ("e-"+to));
+	}
+
+
 	var defaultAssessment = {
 		
 		_assessmentWeight: 1,
@@ -76,8 +81,8 @@ define(function(require) {
 				}, this._completed);
 			}
 
-			this._scoreAsPercent = (100/this._possibleScore) * this._score;
-			this._completedAsPercent = (100/this._possibleCompleted) * this._completed;
+			this._scoreAsPercent = roundTo((100/this._possibleScore) * this._score,0);
+			this._completedAsPercent = roundTo((100/this._possibleCompleted) * this._completed,0);
 
 			return this;
 		},
@@ -306,7 +311,7 @@ define(function(require) {
 	                })._score * item._questionWeight;
 	            //need to do selectable > 1;
 				} else {
-					return sum+=item._questionWeight * 1; //TODO: times by item question max score (assumed 1)
+				return sum+=item._questionWeight * 1; //TODO: times by item question max score (assumed 1)
 				}
 			},0);
 			assess._possibleCompleted = assess._components.length;
@@ -390,7 +395,7 @@ define(function(require) {
 		diffuseAssessment.model.set(course);
 
 		_.defer(function() {
-		Adapt.trigger("diffuseAssessment:initialized", diffuseAssessment);
+			Adapt.trigger("diffuseAssessment:initialized", diffuseAssessment);
 
 			//perform Initial calculations
 			_.each(order, function (id) {
@@ -450,14 +455,14 @@ define(function(require) {
 
 		if (!shouldListen) return;
 
-			diffuseAssessment.listenTo(model, "change:_isInteractionsComplete", function(model, change) {
-				if (model.get("_interactions") === undefined || model.get("_hackInteractions")) {
-					if (model.get("_interactions") === undefined ) model.set("_interactions", 0)
-					model.set("_interactions", model.get("_interactions") + model.get("_attempts") - model.get("_attemptsLeft"));
-					model.set("_hackInteractions", true);
-				}
-				Adapt.trigger("diffuseAssessment:interactionComplete", model, change);
-			});
+		diffuseAssessment.listenTo(model, "change:_isInteractionsComplete", function(model, change) {
+			if (model.get("_interactions") === undefined || model.get("_hackInteractions")) {
+				if (model.get("_interactions") === undefined ) model.set("_interactions", 0)
+				model.set("_interactions", model.get("_interactions") + model.get("_attempts") - model.get("_attemptsLeft"));
+				model.set("_hackInteractions", true);
+			}
+			Adapt.trigger("diffuseAssessment:interactionComplete", model, change);
+		});
 
 	});
 

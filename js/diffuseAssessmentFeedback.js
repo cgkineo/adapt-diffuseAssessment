@@ -39,9 +39,10 @@ define(function(require) {
 
             var assessment = Adapt.diffuseAssessment.getAssessmentById(assess);
 
-            //if (!model._isResetOnRevisit && assessment._isComplete) 
+            if (!model._isResetOnRevisit && assessment._isComplete) {
                 assessment.process();
                 this.assessmentComplete(assessment);
+            }
 
         },
 
@@ -59,7 +60,7 @@ define(function(require) {
                 if (item._forScoreAsPercent !== undefined && item._forScoreAsPercent._max >= assess._scoreAsPercent && item._forScoreAsPercent._min <= assess._scoreAsPercent ) {
                     feedback = item;
                     break;
-                } else if (item._forScore !== undefined && item._forScore._max >= assess._score && feedback._forScore._min <= assess._score ) {
+                } else if (item._forScore !== undefined && item._forScore._max >= assess._score && item._forScore._min <= assess._score ) {
                     feedback = item;
                     break;
                 } else if (item._forPoints !== undefined && item._forPoints._max >= assess._currentPoints && item._forPoints._min <= assess._currentPoints ) {
@@ -96,8 +97,8 @@ define(function(require) {
                 }
                 this.$el.find(".component-body-inner").html(body);
             } else {
-                this.$el.find(".component-title-inner").html(HBS.compile(feedback.title)(assess));
-                this.$el.find(".component-body-inner").html(HBS.compile(feedback.body)(assess));
+            this.$el.find(".component-title-inner").html(HBS.compile(feedback.title)(assess));
+            this.$el.find(".component-body-inner").html(HBS.compile(feedback.body)(assess));
             }
 
             var thisHandle = this;
@@ -116,10 +117,10 @@ define(function(require) {
                     thisHandle.$el.children("#outputimg").remove();
                     thisHandle.$el.append(img);
 
-                    if (assessment._hideUntilComplete) {
-                        thisHandle.$el.hide(0);
-                        thisHandle.$el.removeClass("display-none");
-                        thisHandle.$el.fadeIn(1000);
+                    if (assessment._hideUntilComplete && !assess._isComplete) {
+                        this.$(".component-inner").css("display", "none").addClass("display-none");
+                    } else if (assessment._hideUntilComplete && assess._isComplete) {
+                        this.$(".component-inner").css("display", "").removeClass("display-none").fadeIn(assessment._showAnimationDuration || 2000)
                     }
 
                 }, function(clone) {
@@ -128,11 +129,11 @@ define(function(require) {
                 });
             } else {
 
-                if (assessment._hideUntilComplete) {
-                    this.$el.css("display", "none");
-                    this.$el.removeClass("display-none");
-                    this.$el.fadeIn(assessment._showAnimationDuration || 2000);
-                }
+                if (assessment._hideUntilComplete && !assess._isComplete) {
+                        this.$(".component-inner").css("display", "none").addClass("display-none");
+                    } else if (assessment._hideUntilComplete && assess._isComplete) {
+                        this.$(".component-inner").css("display", "").removeClass("display-none").fadeIn(assessment._showAnimationDuration || 2000)
+                    }
 
             }
 
