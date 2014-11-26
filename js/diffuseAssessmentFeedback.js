@@ -79,15 +79,28 @@ define(function(require) {
 
             if (feedback === undefined) return;
 
+            var block =  this.model.getParent();
+            var article =  block.getParent();
+            var page = article.getParent();
+            var menu = page.getParent();
+
+            var parameters = _.extend({
+                _parentBlock: block.toJSON(),
+                _parentArticle: article.toJSON(),
+                _parentPage: page.toJSON(),
+                _parentMenu: menu.toJSON(),
+                _parentCourse: Adapt.course.toJSON()
+            }, assess);
+
             if (_.isArray(feedback)) {
                 var body = "";
                 _.each(feedback, function(item) {
                     if (item._isOnlyAlone) {
                         if (feedback.length > 1) return;
                     }
-                    body+=HBS.compile(item.body)(assess);
+                    body+=HBS.compile(item.body)(parameters);
                 });
-                var title = HBS.compile(this.model.get("title"))(assess);
+                var title = HBS.compile(this.model.get("title"))(parameters);
                 this.$el.find(".component-title-inner").html(title);
                 if (assessment._feedbackHeader) {
                     body = assessment._feedbackHeader+body;
@@ -97,8 +110,8 @@ define(function(require) {
                 }
                 this.$el.find(".component-body-inner").html(body);
             } else {
-            this.$el.find(".component-title-inner").html(HBS.compile(feedback.title)(assess));
-            this.$el.find(".component-body-inner").html(HBS.compile(feedback.body)(assess));
+                this.$el.find(".component-title-inner").html(HBS.compile(feedback.title)(parameters));
+                this.$el.find(".component-body-inner").html(HBS.compile(feedback.body)(parameters));
             }
 
             var thisHandle = this;
